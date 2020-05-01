@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf=8">
+		<title>PiKlib patcher</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<header>
+			<p>PIKLIB PATCHER</p>
+		</header>
+		<main>
+			<aside>
+                <ul>
+                    <li>Wgraj i pobierz</li>
+                    <li>Patche manualne
+                        <ul>
+                            <li>RiSP</li>
+                            <li>RiU</li>
+                        </ul>
+                    </li>
+                </ul>
+			</aside><!--
+            --><article>
+                <p>Wgraj: <input id="file_input" type="file" accept=".dll" multiple="false"></p>
+                <div id="patch_choice">
+                    <p>Wykryto grę:</p>
+                    <p><span id="detected_game"></span> =&gt; <span id="detected_library"></span></p>
+                    <p id="library_description"></p>
+                    <p>Wybierz patch:</p>
+                    <div id="patch_checks">
+                        <input class="patch_check" type="checkbox" id="nocd">no-CD<br>
+                        <input class="patch_check" type="checkbox" id="debuglog">debug log<br>
+                    </div>
+                    <button id="patch_button">Patchuj!</button><br>
+                </div>
+                <div id="unknown">
+                    <p>Nieznana wersja biblioteki!</p>
+                    <a href="mailto:rockdove@int.pl?subject=%5BPiKlib%20patcher%5D%20Brakuj%C4%85ca%20biblioteka&body=Uzupe%C5%82nij%20poni%C5%BCszy%20formularz%20i%20nie%20zapomnij%20za%C5%82%C4%85czy%C4%87%20biblioteki%21%0A%0ANazwa%20gry%3A%20%0ACechy%20szczeg%C3%B3lne%20wydania%20%28opcjonalne%29%3A%20%0APo%C5%BC%C4%85dane%20%C5%82atki%20%28opcjonalne%29%3A%20">Powiadom mnie!</a>
+                </div>
+                <a id="file_output">Pobierz!</a>
+			</article>
+		</main>
+        <div id="loading">
+            <p>Ładowanie...</p>
+        </div>
+		<script type="text/javascript" src="script.js"></script>
+	</body>
+</html>
