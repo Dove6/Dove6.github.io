@@ -15,6 +15,7 @@ aside {
 article {
     position: absolute;
     background: aliceblue;
+    padding: 0.5em 2em;
 }
 
 #patch_choice, #unknown, #file_output {
