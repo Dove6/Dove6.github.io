@@ -18,6 +18,10 @@ article {
     padding: 0.5em 2em;
 }
 
+#error_article, #error_article > section {
+    display: none;
+}
+
 #patch_choice, #unknown, #file_output {
     display: none;
 }

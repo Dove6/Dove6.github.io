@@ -1,4 +1,4 @@
-(function() {
+(async function() {
     // debug
     let debug = true;
 
@@ -10,6 +10,7 @@
     let applicable_patches = null;
     let output_data = null;
     let database = null;
+    let _ = null;  // for strings localization
 
     /*
     * FUNCTIONS
@@ -94,7 +95,7 @@
             checkbox.className = 'patch_check';
             let label = document.createElement('label');
             label.setAttribute('for', checkbox.id);
-            label.innerHTML = patch['name'] + '<br>' + patch['description'];
+            label.innerHTML = `${patch['name']}<br>${patch['description']}`;
             document.getElementById('patch_checks').appendChild(checkbox);
             document.getElementById('patch_checks').appendChild(label);
             document.getElementById('patch_checks').appendChild(document.createElement('br'));
@@ -129,7 +130,9 @@
                     output_editable[e['index']] = e['value'];
                 });
         });
-        document.getElementById('file_output').href = URL.createObjectURL(new Blob([output_data], {type: 'application/x-msdownload'}));
+        document.getElementById('file_output').href = URL.createObjectURL(
+            new Blob([output_data], {type: 'application/x-msdownload'})
+        );
         document.getElementById('file_output').style.display = 'block';
         if (debug) {
             console.log('Patched!');
@@ -140,6 +143,7 @@
     /*
     * MAIN BODY
     */
+    _ = await localizedStrings.generateLocalizationFunction(navigator.language);
     sheetParser.loadSheets()
         .then(loaded_db => {
             database = loaded_db;
@@ -150,9 +154,14 @@
                 console.log('Sheet parsing promise status: resolved!');
             }
         }, error => {
-            let main_article = document.getElementsByTagName('article')[0];
-            main_article.innerHTML = `<p>Błąd ładowania bazy łatek: <span class="error">${error}</span></p>`
-                + '<p>Sprawdź połączenie internetowe, a następnie spróbuj odświeżyć stronę!</p>';
+            let main_article = document.getElementById('main_article');
+            let error_article = document.getElementById('error_article');
+            let db_error_section = document.getElementById('db_loading_error');
+            let error_span = db_error_section.getElementsByClassName('error')[0];
+            main_article.style.display = 'none';
+            error_article.style.display = 'block';
+            db_error_section.style.display = 'block';
+            error_span.innerHTML = String(error);
             if (debug) {
                 console.log('Sheet parsing promise status: rejected!');
             }
@@ -163,4 +172,8 @@
                 console.log('Sheet parsing promise settled!');
             }
         });
+    Array.from(document.getElementsByClassName('localized')).forEach(element => {
+        element.innerHTML = _(element.innerHTML);
+    });
+    document.getElementById('mail_notify').href = _('mail');
 })();
