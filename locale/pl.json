@@ -9,7 +9,7 @@
     "Notify me": "Powiadom mnie",
     "Download": "Pobierz",
     "Loading": "Ładowanie",
-    "mailto": "mailto:rockdove@int.pl?subject=%5BPiKlib%20patcher%5D%20Brakuj%C4%85ca%20biblioteka&body=Uzupe%C5%82nij%20poni%C5%BCszy%20formularz%20i%20nie%20zapomnij%20za%C5%82%C4%85czy%C4%87%20biblioteki%21%0A%0ANazwa%20gry%3A%20%0ACechy%20szczeg%C3%B3lne%20wydania%20%28opcjonalne%29%3A%20%0APo%C5%BC%C4%85dane%20%C5%82atki%20%28opcjonalne%29%3A%20",
+    "mailto:rockdove@int.pl?subject=%5BPiKlib%20patcher%5D%20Missing%20library&body=Fill%20in%20this%20form%20and%20don%27t%20forget%20to%20attach%20the%20library%21%0A%0AGame%20name%3A%20%0AGame%20edition%20distinctive%20features%20%28optional%29%3A%20%0ADesired%20patches%20%28optional%29%3A%20": "mailto:rockdove@int.pl?subject=%5BPiKlib%20patcher%5D%20Brakuj%C4%85ca%20biblioteka&body=Uzupe%C5%82nij%20poni%C5%BCszy%20formularz%20i%20nie%20zapomnij%20za%C5%82%C4%85czy%C4%87%20biblioteki%21%0A%0ANazwa%20gry%3A%20%0ACechy%20szczeg%C3%B3lne%20wydania%20%28opcjonalne%29%3A%20%0APo%C5%BC%C4%85dane%20%C5%82atki%20%28opcjonalne%29%3A%20",
     "Patch database loading error": "Błąd ładowania bazy łatek",
     "Check your internet connection and refresh the page": "Sprawdź połączenie internetowe, a następnie spróbuj odświeżyć stronę"
 }

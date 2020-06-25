@@ -83,7 +83,8 @@
             .find(lib => lib['id'] == detected_ids['library'])['name'];
         document.getElementById('library_description').innerHTML = database['libraries']
             .find(lib => lib['id'] == detected_ids['library'])['comment'];
-        applicable_patches = database['patches'].filter(e => e['library_id'] == detected_ids['library']);
+        applicable_patches = database['patches']
+            .filter(patch => ((patch['library_id'] == detected_ids['library']) && (patch['is_valid'].toLowerCase() == 'true')));
         if (debug) {
             console.log('Available patches:\n', applicable_patches);
         }
@@ -93,6 +94,27 @@
             checkbox.id = 'patch' + patch['id'];
             checkbox.name = checkbox.id;
             checkbox.className = 'patch_check';
+            let poisoned_ids = new Array();
+            database['incompatibility']
+                .filter(entry => (entry['patch_id1'] == patch['id'] || entry['patch_id2'] == patch['id']))
+                .forEach(entry => {
+                    if (entry['patch_id1'] == patch['id']) {
+                        poisoned_ids.push(entry['patch_id2']);
+                    } else {
+                        poisoned_ids.push(entry['patch_id1']);
+                    }
+                });
+            poisoned_ids = poisoned_ids.map(id => `patch${id}`);
+            checkbox.addEventListener('change', event => {
+                if (event.target.checked) {
+                    poisoned_ids.forEach(poisoned_id => {
+                        let poisoned_check = document.getElementById(poisoned_id);
+                        if (poisoned_check) {
+                            poisoned_check.checked = false;
+                        }
+                    });
+                }
+            });
             let label = document.createElement('label');
             label.setAttribute('for', checkbox.id);
             label.innerHTML = `${patch['name']}<br>${patch['description']}`;
@@ -143,7 +165,9 @@
     /*
     * MAIN BODY
     */
-    _ = await localizedStrings.generateLocalizationFunction(navigator.language);
+    _ = await localizedStrings.generateLocalizationFunction(
+        navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage)
+    );
     sheetParser.loadSheets()
         .then(loaded_db => {
             database = loaded_db;
@@ -159,7 +183,7 @@
             let db_error_section = document.getElementById('db_loading_error');
             let error_span = db_error_section.getElementsByClassName('error')[0];
             main_article.style.display = 'none';
-            error_article.style.display = 'block';
+            error_article.style.display = 'inline-block';
             db_error_section.style.display = 'block';
             error_span.innerHTML = String(error);
             if (debug) {
@@ -175,5 +199,5 @@
     Array.from(document.getElementsByClassName('localized')).forEach(element => {
         element.innerHTML = _(element.innerHTML);
     });
-    document.getElementById('mail_notify').href = _('mail');
+    document.getElementById('mail_notify').href = _(document.getElementById('mail_notify').href);
 })();
