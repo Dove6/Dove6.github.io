@@ -15,22 +15,48 @@
     /*
     * FUNCTIONS
     */
-    function processInputFile() {
-        if (this.files.length == 0) {
-            if (debug) {
-                console.log('No input files selected!');
+    function processInputFile(event) {
+        let input_file = null;
+        if (event.type == 'change') {
+            if (this.files.length == 0) {
+                if (debug) {
+                    console.log('No input files selected!');
+                }
+                return;
             }
-            return;
+            input_file = this.files[0];
+        } else if (event.type == 'drop') {
+            // based on: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop
+            event.preventDefault();  // prevent opening the file
+            if (event.dataTransfer.items) {
+                // use DataTransferItemList interface to access the file
+                if (event.dataTransfer.items.length > 0) {
+                    if (event.dataTransfer.items[0].kind === 'file') {
+                        input_file = event.dataTransfer.items[0].getAsFile();
+                        document.getElementById('file_screen').classList.remove('drag');
+                    } else {
+                        if (debug) {
+                            console.log('Dropped a non-file item');
+                        }
+                        // change background
+                    }
+                }
+            } else {
+                // use DataTransfer interface to access the file
+                if (event.dataTransfer.files.length > 0) {
+                    input_file = event.dataTransfer.files[0];
+                }
+            }
         }
-        document.getElementById('file_output').setAttribute('download', this.files[0].name);
+        document.getElementById('file_output').setAttribute('download', input_file.name);
         Array.from(document.getElementsByClassName('file_name')).forEach(name => {
-            name.innerHTML = this.files[0].name;
+            name.innerHTML = input_file.name;
         }, this);
         input_data = null;
         output_data = null;
         detected_ids['game'] = null;
         detected_ids['library'] = null;
-        this.files[0].arrayBuffer()
+        input_file.arrayBuffer()
             .then(data => {
                 input_data = data;
                 if (debug) {
@@ -174,6 +200,18 @@
         .then(loaded_db => {
             database = loaded_db;
             document.getElementById('file_input').addEventListener('change', processInputFile);
+            document.getElementById('file_screen').addEventListener('drop', processInputFile);
+            document.getElementById('file_screen').addEventListener('dragover', event => {
+                event.preventDefault();
+                if (!document.getElementById('file_screen').classList.contains('drag')) {
+                    document.getElementById('file_screen').classList.add('drag');
+                }
+            });
+            document.getElementById('file_screen').addEventListener('dragenter', event => event.preventDefault());
+            document.getElementById('file_screen').addEventListener('dragleave', event => {
+                event.preventDefault();
+                document.getElementById('file_screen').classList.remove('drag');
+            });
             document.getElementById('patch_button').addEventListener('click', patchLibrary);
             if (debug) {
                 console.log({database});

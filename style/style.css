@@ -9,6 +9,7 @@ body {
     width: 100%;
     height: 100%;
     background: white;
+    transition: background 0.5s;
     padding: 0 0.5em;
     box-sizing: border-box;
     display: flex;
@@ -24,6 +25,10 @@ body {
 
 #patch_screen, #error_screen {
     display: none;
+}
+
+#file_screen.drag {
+    background: #f0feff;
 }
 
 #file_input {
