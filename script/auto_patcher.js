@@ -191,7 +191,7 @@
             }
         })
         .finally(() => {
-            document.getElementById('loading').style.display = 'none';
+            document.getElementById('loading_screen').style.display = 'none';
             if (debug) {
                 console.log('Sheet parsing promise settled!');
             }
@@ -199,5 +199,13 @@
     Array.from(document.getElementsByClassName('localized')).forEach(element => {
         element.innerHTML = _(element.innerHTML);
     });
-    document.getElementById('mail_notify').href = _(document.getElementById('mail_notify').href);
+    let mail_address = 'rockdove@int.pl';
+    let mail_subject = `[PiKlib patcher] ${_('Missing library')}`;
+    let mail_body = `${_('Fill in this form and don\'t forget to attach the library')}!
+        
+        ${_('Game name')}: 
+        ${_('Game edition distinctive features (optional)')}: 
+        ${_('Desired patches (optional)')}: `;
+    document.getElementById('mail_notify').href =
+        `mailto:${mail_address}?subject=${encodeURIComponent(mail_subject)}&body=${encodeURIComponent(mail_body)}`;
 })();
