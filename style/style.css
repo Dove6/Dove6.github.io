@@ -18,7 +18,7 @@ body {
     font-size: 110%;
 }
 
-#loading {
+#loading_screen {
     z-index: 100;
 }
 
@@ -85,6 +85,12 @@ button {
     cursor: pointer;
     font: inherit;
     color: inherit;
+}
+
+button:focus, label[for="file_input"]:focus {
+    outline-color: black;
+    outline-style: solid;
+    outline-offset: 1px;
 }
 
 #patch_window, #error_window {

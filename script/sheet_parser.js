@@ -83,7 +83,12 @@ var sheetParser = (function() {
         let grid_id = Number(tables[grid_name]);
         return new Promise((resolve, reject) => {
             fetch(`https://spreadsheets.google.com/feeds/cells/${sheet_id}/${grid_id}/public/full?alt=json`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw Error(response.statusText);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     // nested map of rows
                     //  structure: Map(row_id => Map(column_id => cell_contents))

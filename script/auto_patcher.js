@@ -22,10 +22,10 @@
             }
             return;
         }
-        document.getElementById('patch_choice').style.display = 'none';
-        document.getElementById('unknown').style.display = 'none';
-        document.getElementById('file_output').style.display = 'none';
         document.getElementById('file_output').setAttribute('download', this.files[0].name);
+        Array.from(document.getElementsByClassName('file_name')).forEach(name => {
+            name.innerHTML = this.files[0].name;
+        }, this);
         input_data = null;
         output_data = null;
         detected_ids['game'] = null;
@@ -64,7 +64,10 @@
                 } else {
                     detected_ids['library'] = null;
                     detected_ids['game'] = null;
-                    document.getElementById('unknown').style.display = 'block';
+                    document.getElementById('detection_error_container').style.display = 'block';
+                    document.getElementById('error_screen').style.display = 'flex';
+                    document.getElementById('file_screen').style.display = 'none';
+                    document.querySelector('#error_screen .reset_button').focus();
                 }
                 resolve();
             }, reject)
@@ -72,17 +75,15 @@
     }
 
     function preparePatchChoice() {
-        document.getElementById('patch_checks').innerHTML = '';
+        document.getElementById('patch_checkbox_container').innerHTML = '';
         if (detected_ids['library'] == null) {
             applicable_patches = null;
             throw new Error('No library ID detected!');
         }
-        document.getElementById('detected_game').innerHTML = database['games']
+        document.getElementById('game_name').innerHTML = database['games']
             .find(game => game['id'] == detected_ids['game'])['name'];
-        document.getElementById('detected_library').innerHTML = database['libraries']
+        document.getElementById('library_name').innerHTML = database['libraries']
             .find(lib => lib['id'] == detected_ids['library'])['name'];
-        document.getElementById('library_description').innerHTML = database['libraries']
-            .find(lib => lib['id'] == detected_ids['library'])['comment'];
         applicable_patches = database['patches']
             .filter(patch => ((patch['library_id'] == detected_ids['library']) && (patch['is_valid'].toLowerCase() == 'true')));
         if (debug) {
@@ -93,7 +94,7 @@
             checkbox.type = 'checkbox';
             checkbox.id = 'patch' + patch['id'];
             checkbox.name = checkbox.id;
-            checkbox.className = 'patch_check';
+            checkbox.className = 'patch_checkbox';
             let poisoned_ids = new Array();
             database['incompatibility']
                 .filter(entry => (entry['patch_id1'] == patch['id'] || entry['patch_id2'] == patch['id']))
@@ -117,12 +118,13 @@
             });
             let label = document.createElement('label');
             label.setAttribute('for', checkbox.id);
-            label.innerHTML = `${patch['name']}<br>${patch['description']}`;
-            document.getElementById('patch_checks').appendChild(checkbox);
-            document.getElementById('patch_checks').appendChild(label);
-            document.getElementById('patch_checks').appendChild(document.createElement('br'));
+            label.innerHTML = `<span class="checkbox_title">${patch['name']}</span><br>${patch['description']}`;
+            document.getElementById('patch_checkbox_container').appendChild(checkbox);
+            document.getElementById('patch_checkbox_container').appendChild(label);
+            document.getElementById('patch_checkbox_container').appendChild(document.createElement('br'));
         });
-        document.getElementById('patch_choice').style.display = 'block';
+        document.getElementById('patch_screen').style.display = 'flex';
+        document.getElementById('file_screen').style.display = 'none';
     }
 
     function patchLibrary() {
@@ -135,7 +137,7 @@
         output_data = input_data.slice();
         let output_editable = new Uint8Array(output_data);
         let patches_to_apply = new Array();
-        let checked_boxes = Array.from(document.getElementsByClassName('patch_check')).filter(e => e.checked);
+        let checked_boxes = Array.from(document.getElementsByClassName('patch_checkbox')).filter(e => e.checked);
         checked_boxes.forEach(checkbox => {
             let id = checkbox.id.match(/patch(.+)$/)[1];
             patches_to_apply.push(database['patches'].find(patch => patch['id'] == id));
@@ -155,10 +157,10 @@
         document.getElementById('file_output').href = URL.createObjectURL(
             new Blob([output_data], {type: 'application/x-msdownload'})
         );
-        document.getElementById('file_output').style.display = 'block';
         if (debug) {
             console.log('Patched!');
         }
+        document.getElementById('file_output').click();
     }
 
 
@@ -178,14 +180,13 @@
                 console.log('Sheet parsing promise status: resolved!');
             }
         }, error => {
-            let main_article = document.getElementById('main_article');
-            let error_article = document.getElementById('error_article');
-            let db_error_section = document.getElementById('db_loading_error');
-            let error_span = db_error_section.getElementsByClassName('error')[0];
-            main_article.style.display = 'none';
-            error_article.style.display = 'inline-block';
+            let error_screen = document.getElementById('error_screen');
+            let db_error_section = document.getElementById('database_error_container');
+            let error_message = document.getElementById('database_error');
             db_error_section.style.display = 'block';
-            error_span.innerHTML = String(error);
+            error_message.innerHTML = String(error.message) + ((error.name !== 'Error') ? ` (${error.name})` : '');
+            error_screen.style.display = 'flex';
+            document.getElementById('file_screen').style.display = 'none';
             if (debug) {
                 console.log('Sheet parsing promise status: rejected!');
             }
@@ -196,16 +197,37 @@
                 console.log('Sheet parsing promise settled!');
             }
         });
+
     Array.from(document.getElementsByClassName('localized')).forEach(element => {
         element.innerHTML = _(element.innerHTML);
     });
     let mail_address = 'rockdove@int.pl';
     let mail_subject = `[PiKlib patcher] ${_('Missing library')}`;
-    let mail_body = `${_('Fill in this form and don\'t forget to attach the library')}!
-        
+    let mail_body = `${_('Fill in this form and don\'t forget to attach the library')}!\n
         ${_('Game name')}: 
         ${_('Game edition distinctive features (optional)')}: 
         ${_('Desired patches (optional)')}: `;
     document.getElementById('mail_notify').href =
         `mailto:${mail_address}?subject=${encodeURIComponent(mail_subject)}&body=${encodeURIComponent(mail_body)}`;
+
+    document.querySelector('label[for="file_input"]').addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.target.click();
+        }
+    });
+    document.querySelector('label[for="file_input"]').addEventListener('keyup', event => {
+        if (event.key === ' ' || event.key === 'Spacebar') {
+            event.target.click();
+        }
+    });
+    Array.from(document.getElementsByClassName('reset_button')).forEach(button => {
+        button.addEventListener('click', () => {
+            Array.from(document.getElementsByClassName('screen')).forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.getElementById('file_screen').style.display = 'flex';
+            document.getElementById('file_input').value = null;
+            document.querySelector('label[for="file_input"]').focus();
+        });
+    });
 })();
