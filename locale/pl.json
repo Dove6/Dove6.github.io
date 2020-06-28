@@ -16,5 +16,8 @@
     "Game edition distinctive features (optional)": "Cechy szczególne wydania (opcjonalne)",
     "Desired patches (optional)": "Pożądane łatki (opcjonalne)",
     "Patch database loading error": "Błąd ładowania bazy łatek",
-    "Check your internet connection and refresh the page": "Sprawdź połączenie internetowe, a następnie spróbuj odświeżyć stronę"
+    "Check your internet connection and refresh the page": "Sprawdź połączenie internetowe, a następnie spróbuj odświeżyć stronę",
+    "Use the automatic patcher": "Skorzystaj z patchera automatycznego",
+    "Available patches": "Dostępne łatki",
+    "none": "brak"
 }
