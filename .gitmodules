@@ -1,0 +1,3 @@
+[submodule "projects/PiKlib_patcher"]
+	path = projects/PiKlib_patcher
+	url = https://github.com/Dove6/PiKlib_patcher.git
